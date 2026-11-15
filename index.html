@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta
+      name="description"
+      content="MENEZES BARBER's. Barbearia no Centro de Pato Branco: corte, barba e barboterapia. Agende o seu horário pelo site."
+    />
+    <link rel="icon" type="image/png" href="/assets/logo.png" />
+    <link rel="apple-touch-icon" href="/assets/logo-512.png" />
+    <!-- Fonte dos títulos (Anton): o Vite troca o caminho pelo arquivo com hash. As outras fontes carregam normalmente (font-display: swap). -->
+    <link
+      rel="preload"
+      href="/node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <!-- Fundo do topo em camadas (é o LCP da landing): sem isso o navegador só o descobre depois que o React monta a página.
+         Só em "/" (no /agendar e no /painel seria download à toa). O caminho precisa ser igual ao de
+         src/data/hero.ts (HERO_CAMADAS.fundo); o teste tests/preload-hero.test.ts confere.
+         Se mexer neste script, atualize o hash sha256 no vercel.json (tests/vercel-csp.test.ts acusa). -->
+    <script>
+      if (location.pathname === '/') {
+        var l = document.createElement('link')
+        l.rel = 'preload'
+        l.as = 'image'
+        l.type = 'image/webp'
+        l.setAttribute('fetchpriority', 'high')
+        l.href = '/assets/hero/fundo.webp'
+        document.head.appendChild(l)
+      }
+    </script>
+    <title>MENEZES BARBER's</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

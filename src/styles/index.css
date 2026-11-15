@@ -1,0 +1,413 @@
+@import 'tailwindcss';
+@import '@fontsource/anton/latin-400.css';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+
+/*
+  TOKENS DO TEMA. Única fonte de cores, fontes e tamanhos do projeto.
+  Componentes usam só as classes geradas daqui (bg-preto, text-neon, font-display...).
+  O Tailwind v4 cria as classes a partir destas variáveis --color-*, --font-*, --text-*.
+  "static" força o Tailwind a escrever TODAS as variáveis no CSS final (por padrão ele só
+  escreve as que alguma classe usa). Assim o CSS e o JS leem ângulo, duração e easing daqui.
+*/
+@theme static {
+  /*
+    Cores da MENEZES BARBER's. Os NOMES dos tokens vieram do demo da URBZ e foram mantidos para não
+    mexer em dezenas de componentes: "preto" é o fundo quase preto, "neon" é a cor de destaque
+    (aqui, o amarelo do logo), "branco" é o texto forte (aqui, um off-white quente).
+  */
+  --color-preto: #0b0b0d; /* fundo da página */
+  --color-asfalto: #111114; /* fundo de seção alternada */
+  --color-concreto: #1b1b21; /* superfícies, painéis */
+  --color-cimento: #2e2e36; /* grafite: bordas, divisórias */
+  --color-chumbo: #918e88; /* texto secundário e detalhes (AA sobre o fundo) */
+  --color-cinza-claro: #cdc8bd; /* texto corrido */
+  --color-branco: #f5f1e8; /* títulos, texto forte */
+  /* Amarelo do logo. No arquivo do AppBarber o tom medido é #F7B516; o dono pediu #F0B414. */
+  --color-neon: #f0b414;
+  /* Dourado quente da luz dos espelhos: preço e detalhe. */
+  --color-dourado: #d8a868;
+
+  /* Fontes */
+  --font-display: 'Anton', Impact, sans-serif;
+  --font-corpo: 'Inter', system-ui, sans-serif;
+
+  /* Escala display: contraste extremo de escala (clamp = mobile até desktop) */
+  --text-display-xl: clamp(4rem, 19vw, 17rem);
+  /* Hero: igual ao xl no celular, mas limitado pela altura da tela (24svh) para o título caber sem rolar */
+  --text-display-hero: clamp(4.5rem, min(22vw, 24svh), 20rem);
+  /* CTA final: o texto ocupa a largura da tela. 2 linhas no celular, 1 linha no desktop (md) */
+  --text-display-cta: 27vw;
+  --text-display-cta-md: 16.4vw;
+  --text-display-lg: clamp(3rem, 12vw, 9.5rem);
+  --text-display-md: clamp(2.25rem, 7vw, 5.25rem);
+  --text-display-sm: clamp(1.5rem, 3.5vw, 2.6rem);
+  /* Posts dos combos no desktop: limitados também pela altura da tela, para o botão caber inteiro antes de o próximo post cobrir */
+  --text-display-post-num: clamp(3.5rem, min(10vw, 15svh), 8rem);
+  --text-display-post: clamp(2.5rem, min(6vw, 9svh), 5rem);
+
+  /* Movimento: uma curva e três durações para todo o site */
+  --ease-urbz: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-rapida: 200ms;
+  --duration-media: 500ms;
+  --duration-lenta: 900ms;
+
+  /* Ângulo das listras "////" e dos recortes diagonais */
+  --angulo-listra: 18deg;
+
+  /* Espaçamento de seção (padding vertical) e margem lateral */
+  --spacing-secao: clamp(4rem, 10vw, 9rem);
+  --spacing-gutter: clamp(1rem, 4vw, 3rem);
+  /* Painel: altura de uma hora na grade da agenda (15 min = 1,5rem, ainda cabe uma linha de texto) */
+  --spacing-hora: 6rem;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-preto);
+    color-scheme: dark;
+  }
+
+  /* Sem rolagem animada nativa para quem pediu menos movimento */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-preto);
+    color: var(--color-cinza-claro);
+    font-family: var(--font-corpo);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    color: var(--color-branco);
+    text-transform: uppercase;
+    /* 1 (e não 0.9): a Anton é alta e os acentos (Ê, Ç, Ã) encostariam na linha de cima. */
+    line-height: 1;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+
+  /* O <fieldset> nasce com min-width: min-content, o que o faz esticar a página quando tem uma
+     faixa que rola de lado dentro. Zerar impede a rolagem horizontal da página. */
+  fieldset {
+    min-width: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-neon);
+    outline-offset: 3px;
+  }
+
+  /* Ao pular para o conteúdo, o topo do <main> para abaixo do cabeçalho fixo (h-16 = 4rem). */
+  main {
+    scroll-margin-top: 4rem;
+  }
+
+  /* <main> só recebe foco por script (link "Pular para o conteúdo"): não é controle, então sem contorno. */
+  main[tabindex='-1']:focus {
+    outline: none;
+  }
+}
+
+/*
+  Recursos gráficos dos posts. Usam só tokens (a cor vem de currentColor: o componente
+  escolhe com text-neon, text-cimento...).
+*/
+@layer components {
+  /* Faixa de listras "////": barras inclinadas no ângulo do tema */
+  .listras {
+    background-image: repeating-linear-gradient(
+      calc(90deg + var(--angulo-listra)),
+      currentColor 0 0.4rem,
+      transparent 0.4rem 1.1rem
+    );
+  }
+
+  /* Enquadramento da foto: cada <Foto> traz um foco para o celular e outro para o desktop (breakpoint md = 48rem). */
+  .foco-foto {
+    object-position: var(--foco-celular, center);
+  }
+  @media (min-width: 48rem) {
+    .foco-foto {
+      object-position: var(--foco-desktop, center);
+    }
+  }
+
+  /*
+    Grão de filme: ruído estático (SVG) por cima da foto, em opacidade baixa. Disfarça a
+    perda de nitidez das fotos pequenas quando ampliadas. Sem animação, sem custo de scroll.
+    Precisa de um pai com position (relative ou absolute).
+  */
+  .grao::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.14;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Painel: uma linha fina por hora, no fundo da coluna da agenda */
+  .linhas-de-hora {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--color-cimento) 0 1px,
+      transparent 1px var(--spacing-hora)
+    );
+  }
+
+  /*
+    Detalhes do agendamento no painel (<dialog>). Entrada só com transform e opacity; sem a animação
+    (prefers-reduced-motion) o diálogo simplesmente aparece, e o estado final é sempre o visível.
+  */
+  @media (prefers-reduced-motion: no-preference) {
+    .painel-folha[open] {
+      animation: folha-sobe var(--duration-media) var(--ease-urbz);
+    }
+    .painel-folha[open]::backdrop {
+      animation: fundo-aparece var(--duration-media) var(--ease-urbz);
+    }
+    @media (min-width: 48rem) {
+      .painel-folha[open] {
+        animation-name: folha-entra;
+      }
+    }
+  }
+
+  /* Texto só contorno (palavra vazada) */
+  .texto-vazado {
+    /* text-fill-color (e não color) para a classe de cor, como text-neon, não preencher o miolo */
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 2px currentColor;
+  }
+}
+
+@keyframes folha-sobe {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes folha-entra {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes fundo-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+/*
+  TOPO EM CAMADAS DA LANDING (components/secoes/Hero.tsx).
+  Três imagens empilhadas que se movem com o mouse (computador) ou com a rolagem (celular).
+  Os números vêm da especificação do dono do repositório: não altere sem conferir os prints.
+  O JS grava só três variáveis no contêiner: --mx e --my (modo mouse) e --p (modo rolagem).
+*/
+@layer components {
+  .topo {
+    position: relative;
+    height: 100svh;
+    min-height: 640px;
+    overflow: hidden;
+    --mx: 0;
+    --my: 0;
+    --p: 0;
+  }
+
+  /* Cada camada tem 110% da tela: a sobra de 5% por lado esconde a borda quando ela se desloca. */
+  .camada {
+    position: absolute;
+    inset: -5%;
+    width: 110%;
+    height: 110%;
+    max-width: none;
+    object-fit: cover;
+    will-change: transform;
+    pointer-events: none;
+    user-select: none;
+  }
+  .camada--fundo {
+    z-index: 1;
+    --d: -20;
+    --r: -40;
+  }
+  .camada--meio {
+    z-index: 2;
+    --d: 30;
+    --r: -80;
+  }
+  .camada--frente {
+    z-index: 3;
+    --d: 42;
+    --r: -140;
+  }
+
+  /* Modo mouse: o fundo anda até 20 px para um lado; meio (30) e frente (42) para o outro. Vertical = metade. */
+  .topo.modo-mouse .camada {
+    transform: translate3d(calc(var(--mx) * var(--d) * 1px), calc(var(--my) * var(--d) * 0.5px), 0);
+  }
+
+  /* Modo rolagem: a frente sobe 140 px e a sobra de 5% não cobre isso; as três ganham a mesma folga embaixo. */
+  .topo.modo-rolagem .camada {
+    bottom: calc(-5% - 140px);
+    height: calc(110% + 140px);
+    transform: translate3d(0, calc(var(--p) * var(--r) * 1px), 0);
+  }
+
+  .topo__veu {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgb(11 11 13 / 0.85) 0%, rgb(11 11 13 / 0) 55%);
+  }
+
+  .topo__texto {
+    position: absolute;
+    z-index: 5;
+    left: 8vw;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 560px;
+  }
+  .topo__titulo {
+    margin: 0;
+    font-size: clamp(40px, 5.2vw, 76px);
+    line-height: 1;
+  }
+  .topo__titulo span {
+    color: var(--color-neon);
+  }
+  .topo__sub {
+    margin: 20px 0 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: rgb(245 241 232 / 0.8);
+  }
+  .topo__botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  /* Botões da landing: texto em Inter, canto de 4 px. (O /agendar e o /painel usam os botões em fonte display.) */
+  .botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 28px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-family: var(--font-corpo);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 150ms ease-out;
+  }
+  .botao:hover {
+    transform: translateY(-2px);
+  }
+  .botao--principal {
+    background: var(--color-neon);
+    border-color: var(--color-neon);
+    color: var(--color-preto);
+  }
+  .botao--secundario {
+    border-color: rgb(245 241 232 / 0.4);
+    color: var(--color-branco);
+  }
+  .botao--compacto {
+    padding: 10px 18px;
+  }
+
+  /* Entradas: a classe .anima só é posta pelo Hero quando o visitante NÃO pediu movimento reduzido. */
+  .topo.anima .topo__titulo,
+  .topo.anima .topo__sub,
+  .topo.anima .topo__botoes {
+    animation: topo-entrada 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .topo.anima .topo__sub {
+    animation-delay: 80ms;
+  }
+  .topo.anima .topo__botoes {
+    animation-delay: 160ms;
+  }
+  /* Camadas: fade de 400 ms, só depois que o fundo termina de carregar (.carregado). */
+  .topo.anima .camada {
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+  .topo.anima.carregado .camada {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    /* 84% (a especificação dizia 70%): com 70% a cadeira ficava cortada, sem o encosto. */
+    .camada {
+      object-position: 84% center;
+    }
+    .topo__veu {
+      background: linear-gradient(0deg, rgb(11 11 13 / 0.9) 0%, rgb(11 11 13 / 0) 60%);
+    }
+    .topo__texto {
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: 32px;
+      transform: none;
+      max-width: none;
+      padding: 24px;
+    }
+    .topo__titulo {
+      font-size: clamp(36px, 10vw, 44px);
+    }
+    .topo__botoes {
+      flex-direction: column;
+    }
+    .topo__botoes .botao {
+      width: 100%;
+    }
+  }
+  @media (min-width: 769px) and (max-width: 1023px) {
+    .topo__titulo {
+      font-size: 52px;
+    }
+    /* 420 (a especificação dizia 480): em 840 px o subtítulo passava por cima do LED do espelho. */
+    .topo__texto {
+      max-width: 420px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .botao {
+      transition: none;
+    }
+    .botao:hover {
+      transform: none;
+    }
+  }
+}
+
+@keyframes topo-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

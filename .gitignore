@@ -1,0 +1,29 @@
+# dependências e build
+node_modules/
+dist/
+
+# segredos
+.env
+.env.*
+!.env.example
+
+# testes
+test-results/
+playwright-report/
+blob-report/
+coverage/
+
+# ferramentas
+supabase/.temp/
+supabase/.branches/
+.vercel/
+.claude/settings.local.json
+
+# pessoais
+estudo/
+feedback-externo.md
+
+# lixo do sistema e logs
+*.log
+Thumbs.db
+.DS_Store

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(npx supabase db reset *)",
+      "Bash(supabase db reset *)",
+      "Bash(npx supabase projects delete *)",
+      "Bash(npx supabase secrets *)"
+    ]
+  }
+}

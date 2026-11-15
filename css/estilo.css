@@ -1,0 +1,394 @@
+/* =========================================================
+   MENEZES BARBER's
+   Os números da primeira tela vêm da especificação (partes 1 a 7).
+   Não altere sem conferir a checagem da parte 8.
+   ========================================================= */
+
+/* ---------- Parte 2: cores ---------- */
+:root {
+  --fundo: #0B0B0D;      /* fundo da página */
+  --destaque: #F0B414;   /* amarelo do logo */
+  --grafite: #2E2E36;
+  --dourado: #D8A868;    /* dourado quente da luz */
+  --texto: #F5F1E8;      /* texto principal */
+
+  --margem: 8vw;         /* mesma margem esquerda do bloco de texto da primeira tela */
+  --titulos: Anton, Impact, sans-serif;
+  --corpo: Inter, system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--corpo);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--texto); outline-offset: 3px; border-radius: 2px; }
+
+/* =========================================================
+   PRIMEIRA TELA (parte 4)
+   ========================================================= */
+.topo {
+  position: relative;
+  height: 100vh;         /* reserva para navegador sem svh */
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+  --mx: 0;               /* o JS grava só estas três variáveis */
+  --my: 0;
+  --p: 0;
+}
+
+/* As 3 camadas: cada uma com 110% da tela */
+.camada {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  max-width: none;
+  object-fit: cover;
+  will-change: transform;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.camada--fundo  { z-index: 1; --d: -20; --r: -40; }
+.camada--meio   { z-index: 2; --d: 30;  --r: -80; }
+.camada--frente { z-index: 3; --d: 42;  --r: -140; }
+
+/* Parte 6, passo 5: modo mouse */
+.topo.modo-mouse .camada {
+  transform: translate3d(calc(var(--mx) * var(--d) * 1px), calc(var(--my) * var(--d) * 0.5px), 0);
+}
+
+/* Parte 6, passo 7: modo rolagem. A frente sobe 140 px e a sobra de 5% não cobre isso,
+   então as 3 camadas ganham a mesma folga embaixo para continuarem alinhadas. */
+.topo.modo-rolagem .camada {
+  bottom: calc(-5% - 140px);
+  height: calc(110% + 140px);
+  transform: translate3d(0, calc(var(--p) * var(--r) * 1px), 0);
+}
+
+.topo__veu {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(11, 11, 13, 0.85) 0%, rgba(11, 11, 13, 0) 55%);
+}
+
+.topo__logo {
+  position: absolute;
+  z-index: 5;
+  top: 24px;
+  left: 8vw;
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.topo__logo img { width: 56px; height: 56px; }
+
+.topo__texto {
+  position: absolute;
+  z-index: 5;
+  left: 8vw;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 560px;
+}
+
+.topo__titulo {
+  margin: 0;
+  font-family: var(--titulos);
+  font-weight: 400;
+  font-size: clamp(40px, 5.2vw, 76px);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--texto);
+}
+.topo__titulo span { color: var(--destaque); }
+
+.topo__sub {
+  margin: 20px 0 0;
+  font-size: 18px;
+  line-height: 1.5;
+  color: rgba(245, 241, 232, 0.8);
+}
+
+.topo__botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+/* ---------- Botões ---------- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 28px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: var(--corpo);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 150ms ease-out;
+}
+.botao:hover { transform: translateY(-2px); }
+.botao:focus-visible { outline: 2px solid var(--texto); outline-offset: 3px; }
+.botao--principal  { background: var(--destaque); border-color: var(--destaque); color: var(--fundo); }
+.botao--secundario { background: transparent; border-color: rgba(245, 241, 232, 0.4); color: var(--texto); }
+
+/* =========================================================
+   ANIMAÇÕES DE ENTRADA (parte 5)
+   A classe .anima só é posta pelo JS quando o visitante NÃO pediu movimento reduzido.
+   ========================================================= */
+@keyframes entrada {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.topo.anima .topo__titulo,
+.topo.anima .topo__sub,
+.topo.anima .topo__botoes {
+  animation: entrada 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.topo.anima .topo__sub    { animation-delay: 80ms; }
+.topo.anima .topo__botoes { animation-delay: 160ms; }
+
+/* Camadas: fade de 400 ms, só depois que o fundo termina de carregar (.carregado) */
+.topo.anima .camada { opacity: 0; transition: opacity 400ms ease; }
+.topo.anima.carregado .camada { opacity: 1; }
+
+/* =========================================================
+   RESPONSIVO DA PRIMEIRA TELA (parte 7)
+   ========================================================= */
+@media (max-width: 768px) {
+  .camada { object-position: 70% center; }
+  .topo__veu { background: linear-gradient(0deg, rgba(11, 11, 13, 0.9) 0%, rgba(11, 11, 13, 0) 60%); }
+  .topo__texto {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 32px;
+    transform: none;
+    max-width: none;
+    padding: 24px;
+  }
+  .topo__titulo { font-size: clamp(36px, 10vw, 44px); }
+  .topo__botoes { flex-direction: column; }
+  .topo__botoes .botao { width: 100%; }
+}
+@media (min-width: 769px) and (max-width: 1023px) {
+  .topo__titulo { font-size: 52px; }
+  .topo__texto { max-width: 480px; }
+}
+
+/* =========================================================
+   RESTO DA PÁGINA (sem efeito de camadas)
+   ========================================================= */
+.secao {
+  padding: clamp(72px, 9vw, 128px) var(--margem);
+  border-top: 1px solid var(--grafite);
+}
+.servicos { border-top: 0; }
+
+.secao__titulo {
+  margin: 0 0 clamp(32px, 4vw, 56px);
+  font-family: var(--titulos);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ---------- 1. Serviços: tabela de preços ---------- */
+.tabela {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: clamp(40px, 6vw, 96px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--grafite);
+}
+.tabela__linha {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 0;
+  border-top: 1px solid var(--grafite);
+}
+.tabela__nome {
+  margin: 0;
+  font-family: var(--titulos);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.tabela__desc {
+  margin: 6px 0 0;
+  max-width: 38ch;
+  font-size: 15px;
+  color: rgba(245, 241, 232, 0.7);
+}
+.tabela__preco {
+  flex: none;
+  margin: 0;
+  font-family: var(--titulos);
+  font-size: 26px;
+  line-height: 1.1;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--dourado);
+}
+.tabela__preco small {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--corpo);
+  font-size: 12px;
+  line-height: 1.2;
+  color: rgba(245, 241, 232, 0.6);
+}
+.servicos__acao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: 40px;
+}
+.servicos__nota { margin: 0; color: rgba(245, 241, 232, 0.7); }
+
+/* ---------- 2. O espaço ---------- */
+.espaco__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+.espaco__fotos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 800px;
+}
+.espaco__fotos img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.espaco__fotos img:first-child { grid-column: 1 / -1; }
+.espaco__texto p { margin: 0; max-width: 40ch; font-size: 18px; }
+.comodidades {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: start;
+  gap: 10px 32px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.comodidades li { position: relative; padding-left: 18px; }
+.comodidades li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--destaque);
+}
+
+/* ---------- 3. Horários, endereço e mapa ---------- */
+.visita__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+}
+.horarios { width: 100%; border-collapse: collapse; font-size: 17px; }
+.horarios th,
+.horarios td {
+  padding: 14px 0;
+  border-top: 1px solid var(--grafite);
+  vertical-align: top;
+  text-align: left;
+}
+.horarios th { font-weight: 600; }
+.horarios td { text-align: right; font-weight: 400; font-variant-numeric: tabular-nums; }
+.horarios tr:last-child th,
+.horarios tr:last-child td { border-bottom: 1px solid var(--grafite); }
+.endereco { margin: 32px 0 24px; font-style: normal; font-size: 17px; line-height: 1.7; }
+.endereco a,
+.rodape__links a { text-decoration-color: rgba(245, 241, 232, 0.4); text-underline-offset: 3px; }
+.mapa {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  border: 0;
+  border-radius: 4px;
+  filter: grayscale(1);
+}
+
+/* ---------- 4. Rodapé ---------- */
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 56px var(--margem);
+  border-top: 1px solid var(--grafite);
+}
+.rodape__marca { margin: 0; font-family: var(--titulos); font-size: 28px; line-height: 1; }
+.rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 17px;
+}
+
+@media (min-width: 900px) {
+  .espaco__grade { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+  .visita__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+}
+@media (min-width: 1024px) {
+  .tabela { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  :root { --margem: 24px; }
+  .rodape { flex-direction: column; align-items: flex-start; }
+  .rodape .botao, .servicos__acao .botao { width: 100%; }
+}
+
+/* ---------- Movimento ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .botao { transition: none; }
+  .botao:hover { transform: none; }
+}
