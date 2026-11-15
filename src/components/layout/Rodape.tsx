@@ -21,7 +21,7 @@ export default function Rodape() {
               rel="noopener noreferrer"
               className={classeLink}
             >
-              WhatsApp (46) 99983-3026
+              WhatsApp (46) 99932-5499
             </a>
           </li>
           <li>

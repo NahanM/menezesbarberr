@@ -114,7 +114,9 @@ export const horarioFuncionamento: FaixaHorario[] = [
 
 export const contato = {
   // Só dígitos, com DDI.
-  whatsapp: '5546999833026',
+  // TESTE: número do dono do repositório. O da barbearia é 5546999833026; volte antes de mostrar ao dono
+  // (e o rótulo no Rodape.tsx).
+  whatsapp: '5546999325499',
   telefoneFixo: { rotulo: '(46) 3199-0441', tel: '+554631990441' },
   endereco: {
     linha1: 'Rua Itabira, 1166, Centro',

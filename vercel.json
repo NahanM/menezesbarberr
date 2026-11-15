@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-VPglJFZSmmG2j+DDZcJeRqR4/RRyAG5UWUzyYQD2lR0='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://mrjmlyvonbhpefapsdac.supabase.co; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'sha256-VPglJFZSmmG2j+DDZcJeRqR4/RRyAG5UWUzyYQD2lR0='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://sjzkntjlhxazatutwons.supabase.co; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
         },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
